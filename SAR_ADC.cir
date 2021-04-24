@@ -1,0 +1,173 @@
+LTSpice SAR behavioral model
+.global gnd vdd
+*****************************************************************************************************
+;10-bit DAC (Behavioral Model)
+
+
+
+*** Start Ideal 10-bt DAC Subcircuit ****************************************************************
+
+.subckt DAC10bit VDD VREF Vout B10 B9 B8 B7 B6 B5 B4 B3 B2 B1
+
+*Generate Logic switching point, or trip, voltage
+R1 VDD trip 100meg
+R2 trip 0 100meg
+
+*Change input logic signals into logic 0s or 1s
+X10 trip B10 B10L Bitlogic
+X9 trip B9 B9L Bitlogic
+X8 trip B8 B8L Bitlogic
+X7 trip B7 B7L Bitlogic
+X6 trip B6 B6L Bitlogic
+X5 trip B5 B5L Bitlogic
+X4 trip B4 B4L Bitlogic
+X3 trip B3 B3L Bitlogic
+X2 trip B2 B2L Bitlogic
+X1 trip B1 B1L Bitlogic
+
+*Nonlinear dependent source, B, for generating the DAC output
+Bout Vout 0 V=(v(vref)/1024)*(v(B10L)*512+v(B9L)*256+v(B8L)*128+v(B7L)*64+v(B6L)*32+v(B5L)*16+v(B4L)*8+v(B3L)*4+v(B2L)*2+v(B1L))
+
+.ends
+
+.subckt Bitlogic trip BX BXL
+Vone one 0 DC 1
+SH one BXL BX trip Switmod
+SL 0 BXL trip BX Switmod
+.model Switmod SW
+.ends
+
+*** END DAC Subcircuit *******************************************************************************
+
+
+
+
+
+; SAR Logic Block
+**************************************************************************************************
+;A_myDflop  D   0 CLK  SET    RESET  Qbar   Q   0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+
+A_myDflop0  g   0 CLK  RESET  g      Qbar   Q0  0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop1  Q0  0 CLK  g      RESET  Qbar1  Q1  0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop2  Q1  0 CLK  g      RESET  Qbar2  Q2  0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop3  Q2  0 CLK  g      RESET  Qbar3  Q3  0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop4  Q3  0 CLK  g      RESET  Qbar4  Q4  0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop5  Q4  0 CLK  g      RESET  Qbar5  Q5  0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop6  Q5  0 CLK  g      RESET  Qbar6  Q6  0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop7  Q6  0 CLK  g      RESET  Qbar7  Q7  0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop8  Q7  0 CLK  g      RESET  Qbar8  Q8  0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop9  Q8  0 CLK  g      RESET  Qbar9  Q9  0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop10 Q9  0 CLK  g      RESET  Qbar10 Q10 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop11 out 0 Q12  Q0     g      Qbar11 Q11 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop12 out 0 Q13  Q1     RESET  Qbar12 Q12 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop13 out 0 Q14  Q2     RESET  Qbar13 Q13 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop14 out 0 Q15  Q3     RESET  Qbar14 Q14 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop15 out 0 Q16  Q4     RESET  Qbar15 Q15 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop16 out 0 Q17  Q5     RESET  Qbar16 Q16 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop17 out 0 Q18  Q6     RESET  Qbar17 Q17 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop18 out 0 Q19  Q7     RESET  Qbar18 Q18 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop19 out 0 Q20  Q8     RESET  Qbar19 Q19 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop20 out 0 Q21  Q9     RESET  Qbar20 Q20 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop21 g   0 g    Q10    RESET  Qbar21 Q21 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+
+**************************************************************************************************
+
+
+
+; Valid Data FlipFlops  (MSB = Q22 , LSB = Q31)
+**************************************************************************************************
+A_myDflop22 Q11 0 vclk g      g      Qbar22 Q22 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop23 Q12 0 vclk g      g      Qbar23 Q23 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop24 Q13 0 vclk g      g      Qbar24 Q24 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop25 Q14 0 vclk g      g      Qbar25 Q25 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop26 Q15 0 vclk g      g      Qbar26 Q26 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop27 Q16 0 vclk g      g      Qbar27 Q27 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop28 Q17 0 vclk g      g      Qbar28 Q28 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop29 Q18 0 vclk g      g      Qbar29 Q29 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop30 Q19 0 vclk g      g      Qbar30 Q30 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+A_myDflop31 Q20 0 vclk g      g      Qbar31 Q31 0 DFLOP Vhigh=5 Vlow=0 Tau=10n
+**************************************************************************************************
+
+
+
+; Valid data DAC
+**************************************************************************************************
+X_myValidDAC vdd vref Vfinal Q22 Q23 Q24 Q25 Q26 Q27 Q28 Q29 Q30 Q31 DAC10bit
+**************************************************************************************************
+
+
+
+;Comparator (LTspice)
+**************************************************************************************************
+;A_myComp sample Dout 0 0 0 outbar out 0 SCHMITT Vhigh=5 Vlow=0 Tau=10n Vt=0 ;Trise=1n Tfall=1n
+**************************************************************************************************
+
+
+
+;Comparator (VLSI)
+**************************************************************************************************
+Mnmos@0 net@9 Dout net@16 gnd NMOS L=0.6U W=3U
+Mnmos@1 net@16 sample net@54 gnd NMOS L=0.6U W=3U
+Mnmos@2 gnd net@39 net@39 gnd NMOS L=0.6U W=3U
+Mnmos@3 net@58 net@39 gnd gnd NMOS L=0.6U W=3U
+Mnmos@4 out net@58 gnd gnd NMOS L=0.6U W=3U
+Mpmos@0 net@54 net@9 vdd vdd PMOS L=0.6U W=6U
+Mpmos@1 vdd net@9 net@9 vdd PMOS L=0.6U W=6U
+Mpmos@2 net@39 Dout net@24 vdd PMOS L=0.6U W=6U
+Mpmos@3 net@24 sample net@58 vdd PMOS L=0.6U W=6U
+Mpmos@4 out net@54 vdd vdd PMOS L=0.6U W=6U
+IDCCurren@0 net@16 gnd DC 0.3uA
+IDCCurren@1 vdd net@24 DC 0.3uA
+**************************************************************************************************
+
+
+;DAC
+**************************************************************************************************
+X_myDAC vdd vref Dout Q11 Q12 Q13 Q14 Q15 Q16 Q17 Q18 Q19 Q20 DAC10bit
+**************************************************************************************************
+
+
+
+;Sample and Hold
+**************************************************************************************************
+A_mySampleHold input 0 0 clksh 0 0 sample 0 SAMPLEHOLD
+**************************************************************************************************
+
+
+; fin = fsample * (number of cycle windows / number of data points)
+
+; Simulation Parameters
+**************************************************************************************************
+           ;pulse(Vinit Von Tdelay Trise Tfall Ton Tperiod)
+
+V1 CLK    0 pulse(0 5 100ns 1ns 1ns 50ns 100ns) ; SAR logic clock has 100ns period
+
+V2 RESET  0 pulse(0 5 0 1ns 1ns 5ns 1.1u)   ; reset is triggered every 1100ns
+*V3 input 0 dc 0.5
+V3 input 0 DC 0 SIN(2.5 2.5 10653.40909)            ; 10,653.4Hz sine wave with 2.5V offset and 2.5V amplitude
+
+V4 clksh 0 pulse(0 5 0 1ns 1ns 5ns 1.1us)    ; clock for sample and hold block , same as rst
+
+V5 vclk 0 pulse(0 5 1.05us 1ns 1ns 0.55us 1.1us) ; valid FF clk, clk goes high when data is ready
+
+VDD vdd 0 DC 5
+
+VREF vref 0 DC 5
+
+Vg g 0 DC 0  ; ground
+
+*V6 cclk 0 pulse(0 5 75ns 1ns 1ns 50ns 100ns) ; comp clock
+
+*.dc V3 0 5 0.001
+
+; run time = (1/input frequency)*(number of windows) + ((1/input frequency)*(number of windows))/(number of data points)
+.tran 282.7us
+*.tran 10us
+.include C:\Users\User\Documents\Electric\C5_models.txt
+.END
+**************************************************************************************************
+
+
+
+
+
